@@ -9,6 +9,7 @@ sim:
 	vvp a.out -lxt2
 
 clean :
-	rm vlist.txt
-	rm a.out 
-	rm *.vcd
+	-rm vlist.txt
+	-rm a.out 
+	-rm *.vcd
+	-find -name "*.o" | xargs rm 

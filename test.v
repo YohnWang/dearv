@@ -28,13 +28,29 @@ begin
 		#1;
 		$display("z=%b",z);
 	end
+	#100
 	$finish;
 
 end
 
+reg[9:0] iaddr;
+wire[63:0] data;
 
+imem imemor
+(
+	.addr(iaddr),
+	.word(3),
+	.data(data)
+);
 
+initial
+begin 
 
+	#1 iaddr=0;
+	#1;
+	$display("%h",data);
+
+end
 
 
 endmodule
