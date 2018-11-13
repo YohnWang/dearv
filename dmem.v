@@ -2,7 +2,7 @@ module dmem
 (
 	input wire[11:0] addr,
 	input wire[63:0] dataw,
-    input wire[1:0] word,
+	input wire[1:0] word,
 	input wire rw,
 	input wire clk,
 	output reg[63:0] datar
