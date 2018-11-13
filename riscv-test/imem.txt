@@ -1,4 +1,3 @@
-00 00 00 b3          	//add	ra,zero,zero
-40 00 00 b3          	//neg	ra,zero
-00 00 70 b3          	//and	ra,zero,zero
-
+b3 00 00 00  // add	ra,zero,zero
+b3 00 00 40  // neg	ra,zero
+b3 70 00 00  // and	ra,zero,zero

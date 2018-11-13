@@ -53,4 +53,32 @@ begin
 end
 
 
+reg clk;
+always #1 clk=~clk;
+
+reg[63:0] pcx;
+wire[63:0] pcy;
+reg reset;
+
+pc pcor
+(
+	.x(pcx),
+	.y(pcy),
+	.clk(clk),
+	.reset(reset)
+);
+
+initial
+begin 
+	$dumpfile("dump.vcd");
+	$dumpvars();
+	clk=0;
+	reset=1;
+	#2;
+	reset=0;
+	pcx=1;
+	forever #2 pcx=!pcx;
+	
+end 
+
 endmodule
