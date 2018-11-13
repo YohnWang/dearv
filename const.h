@@ -16,5 +16,11 @@
 `define SEL_OR   8
 `define SEL_AND  9
 
+`define IMM_I 0
+`define IMM_S 1
+`define IMM_B 2
+`define IMM_U 3
+`define IMM_J 4
+
 `endif
 
