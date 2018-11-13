@@ -24,6 +24,8 @@ begin
 		`SEL_SRA  : z=x>>>y;
 		`SEL_OR   : z=x|y;
 		`SEL_AND  : z=x&y;
+		`SEL_X    : z=x;
+		`SEL_Y    : z=y;
 		default: ;
 	endcase
 end
