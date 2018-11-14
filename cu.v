@@ -17,18 +17,73 @@ module cu
 	
 );
 
+
+reg[3:0] alusel_gen;
+always@(*)
+begin 
+	case(inst[14:12])
+		`ARI_AS     : alusel_gen=inst[30]?`SEL_SUB:`SEL_ADD; 
+		`ARI_SLL    : alusel_gen=`SEL_SLL;
+		`ARI_SLT    : alusel_gen=`SEL_SLT;
+		`ARI_SLTU   : alusel_gen=`SEL_SLTU;
+		`ARI_XOR    : alusel_gen=`SEL_XOR;
+		`ARI_SR     : alusel_gen=inst[30]?`SEL_SRA:`SEL_SRL;
+		`ARI_OR     : alusel_gen=`SEL_OR;
+		`ARI_AND    : alusel_gen=`SEL_AND;
+		default:;
+	endcase
+end 
+
+
+
 always@(*)
 begin 
 	case(inst[6:2])
-		`OP_LUI   : {pcsel,immsel,regwen,brun,asel,bsel,alusel,memrw,memword,wbsel}={`PC_PLUS4,`IMM_U,1'b1,1'bx,1'bx,1'b1,`SEL_Y,1'b0,2'b00,`WB_ALU};
-		`OP_AUIPC :;
+		`OP_LUI   : /*{pcsel,immsel,regwen,brun,asel,bsel,alusel,memrw,memword,wbsel}={`PC_PLUS4,`IMM_U,`REGW_EN,1'bx,1'bx,1'b1,`SEL_Y,1'b0,2'b00,`WB_ALU};*/
+			begin 
+				pcsel=  `PC_PLUS4;
+				immsel= `IMM_U;
+				regwen= `REGW_EN;
+				brun=    0;
+				asel=   `ASEL_PC;
+				bsel=   `BSEL_IMM;
+				alusel= `SEL_ADD;
+				memrw=  `MEM_READ;
+				memword= 0;
+				wbsel=  `WB_ALU;
+			end 
+		`OP_AUIPC :
+			begin 
+				pcsel=  `PC_PLUS4;
+				immsel= `IMM_U;
+				regwen= `REGW_EN;
+				brun=    0;
+				asel=    0;
+				bsel=   `BSEL_IMM;
+				alusel= `SEL_Y;
+				memrw=  `MEM_READ;
+				memword= 0;
+				wbsel=  `WB_ALU;
+			end
 		`OP_JAL   :;
 		`OP_JALR  :;
 		`OP_BRAN  :;
 		`OP_LOAD  :;
 		`OP_STORE :;
 		`OP_ARII  :;
-		`OP_ARIR  :;
+		`OP_ARIR  :
+			begin 
+				pcsel=  `PC_PLUS4;
+				immsel=  0;
+				regwen= `REGW_EN;
+				brun=    0;
+				asel=   `ASEL_REG;
+				bsel=   `BSEL_REG;
+				alusel= alusel_gen;
+				memrw=  `MEM_READ;
+				memword= 0;
+				wbsel=  `WB_ALU;
+			end
 		`OP_FENCE :;
 		`OP_PRIV  :;
 		default  :/*trap*/;
@@ -36,7 +91,6 @@ begin
 	
 
 end
-
 
 
 endmodule

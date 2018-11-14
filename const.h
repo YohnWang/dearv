@@ -30,6 +30,26 @@
 `define PC_PLUS4 1'd0
 `define PC_JUMP  1'd1
 
+`define REGW_EN 1'd1
+`define REGW_UN 1'd0
+
+`define BR_UN 1'd1
+`define BR_SI 1'd0
+
+`define ASEL_PC  1'd1 
+`define ASEL_REG 1'd0
+
+`define BSEL_REG 1'd0 
+`define BSEL_IMM 1'd1 
+
+`define MEM_READ  1'd0
+`define MEM_WRITE 1'd1
+
+`define MEM_BYTE  2'00 
+`define MEM_HALF  2'01
+`define MEM_WORD  2'10
+`define MEM_DOUBLE 2'11
+
 //write back sel 
 `define WB_PCPLUS4 2'd2
 `define WB_ALU     2'd1
