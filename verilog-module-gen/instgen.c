@@ -90,7 +90,7 @@ int main()
 		printf("\t.%s(),\n",s);
 		goto $L0;
 	$T5:
-		printf("\t.%s()\n);",s);
+		printf("\t.%s()\n);\n",s);
 		goto $L0;
 		
 	$L0:

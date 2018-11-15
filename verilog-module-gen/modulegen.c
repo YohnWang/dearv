@@ -56,10 +56,32 @@ int main()
 	}
 $L0:
 	printf("module ");
-	
+	char module_name[1024];
+	scanf("%s",module_name);
+	printf("%s",module_name);
+
+	//while((c=getchar())!='EOF' && isspace(c)){}
+	for(;;)
+	{
+		c=getchar();
+		if(c=='(')
+			goto $L1;
+		if(c=='#')
+		{
+			while((c=getchar())!=EOF && c!=')'){}
+			break;
+		}
+		if(c==';')
+		{
+			printf(";");
+			return 0;
+		}
+		
+	}
 	
 	while((c=getchar())!=EOF && c!=';')
 	{
+	$L1:
 		printf("%c",c);
 	}
 	printf(";\n");
