@@ -34,6 +34,22 @@ begin
 	endcase
 end 
 
+reg pcsel_gen;
+always@(*)
+begin 
+	case(inst[14:12])
+		`BRAN_BEQ : pcsel_gen=breq?`PC_JUMP:`PC_PLUS4;
+		`BRAN_BNE : pcsel_gen=breq?`PC_PLUS4:`PC_JUMP;
+		`BRAN_BLT : begin brun=0;pcsel_gen=brlt?`PC_JUMP:`PC_PLUS4; end 
+		`BRAN_BGE : begin brun=0;pcsel_gen=brlt?`PC_PLUS4:`PC_JUMP; end
+		`BRAN_BLTU: begin brun=1;pcsel_gen=brlt?`PC_JUMP:`PC_PLUS4; end 
+		`BRAN_BGEU: begin brun=1;pcsel_gen=brlt?`PC_PLUS4:`PC_JUMP; end
+		default:;
+	endcase
+end
+
+
+reg[1:0] load_store_word_gen;
 
 
 always@(*)
@@ -65,12 +81,84 @@ begin
 				memword= 0;
 				wbsel=  `WB_ALU;
 			end
-		`OP_JAL   :;
-		`OP_JALR  :;
-		`OP_BRAN  :;
-		`OP_LOAD  :;
-		`OP_STORE :;
-		`OP_ARII  :;
+		`OP_JAL   :
+			begin 
+				pcsel=  `PC_JUMP;
+				immsel= `IMM_J;
+				regwen= `REGW_EN;
+				brun=    0;
+				asel=   `ASEL_PC;
+				bsel=   `BSEL_IMM;
+				alusel= `SEL_ADD;
+				memrw=  `MEM_READ;
+				memword= 0;
+				wbsel=  `WB_PCPLUS4;
+			end 
+		`OP_JALR  :
+			begin 
+				pcsel=  `PC_JUMP;
+				immsel= `IMM_I;
+				regwen= `REGW_EN;
+				brun=    0;
+				asel=   `ASEL_REG;
+				bsel=   `BSEL_IMM;
+				alusel= `SEL_ADD;
+				memrw=  `MEM_READ;
+				memword= 0;
+				wbsel=  `WB_PCPLUS4;
+			end 
+		`OP_BRAN  :
+			begin 
+				pcsel=  breq?`PC_JUMP:`PC_PLUS4;
+				immsel= `IMM_B;
+				regwen= `REGW_UN;
+				brun=    0;
+				asel=   `ASEL_PC;
+				bsel=   `BSEL_IMM;
+				alusel= `SEL_ADD;
+				memrw=  `MEM_READ;
+				memword= 0;
+				wbsel=   0;
+			end 
+		`OP_LOAD  :
+			begin 
+				pcsel=  `PC_PLUS4;
+				immsel= `IMM_I;
+				regwen= `REGW_EN;
+				brun=    0;
+				asel=   `ASEL_REG;
+				bsel=   `BSEL_IMM;
+				alusel= `SEL_ADD;
+				memrw=  `MEM_READ;
+				memword= 0;
+				wbsel=  `WB_MEM;
+			end 
+		`OP_STORE :
+			begin 
+				pcsel=  `PC_PLUS4;
+				immsel= `IMM_S;
+				regwen= `REGW_UN;
+				brun=    0;
+				asel=   `ASEL_REG;
+				bsel=   `BSEL_IMM;
+				alusel= `SEL_ADD;
+				memrw=  `MEM_WRITE;
+				memword= 0;
+				wbsel=   0;
+			end 
+		`OP_ARII  :
+			begin 
+				pcsel=  `PC_PLUS4;
+				immsel= `IMM_I;
+				regwen= `REGW_EN;
+				brun=    0;
+				asel=   `ASEL_REG;
+				bsel=   `BSEL_IMM;
+				alusel=  inst[14:12]?alusel_gen:`SEL_ADD;
+				memrw=  `MEM_READ;
+				memword= 0;
+				wbsel=  `WB_ALU;
+			end 
 		`OP_ARIR  :
 			begin 
 				pcsel=  `PC_PLUS4;
