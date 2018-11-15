@@ -13,8 +13,8 @@ module cu
 	output reg[3:0] alusel,
 	output reg memrw,
 	output reg[1:0] memword,
+	output reg memsign,
 	output reg[1:0] wbsel
-	
 );
 
 
@@ -49,7 +49,11 @@ begin
 end
 
 
-reg[1:0] load_store_word_gen;
+always@(*)
+begin 
+	memword=inst[13:12];
+	memsign=inst[14];
+end
 
 
 always@(*)
@@ -63,7 +67,7 @@ begin
 				brun=    0;
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_ADD;
+				alusel= `SEL_Y;
 				memrw=  `MEM_READ;
 				memword= 0;
 				wbsel=  `WB_ALU;
@@ -76,7 +80,7 @@ begin
 				brun=    0;
 				asel=    0;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_Y;
+				alusel= `SEL_ADD;
 				memrw=  `MEM_READ;
 				memword= 0;
 				wbsel=  `WB_ALU;

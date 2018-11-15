@@ -96,6 +96,12 @@
 `define STORE_SW  3'b010 
 `define STORE_SD  3'b011 
 
+//word size
+`define WORD_BYTE 3'b000 
+`define WORD_HALF 3'b001 
+`define WORD_WORD 3'b010 
+`define WORD_DOUB 3'b011
+
 
 //arithmetic funct 
 `define ARI_AS     3'b000 
