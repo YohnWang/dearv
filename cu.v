@@ -59,7 +59,7 @@ end
 always@(*)
 begin 
 	case(inst[6:2])
-		`OP_LUI   : /*{pcsel,immsel,regwen,brun,asel,bsel,alusel,memrw,memword,wbsel}={`PC_PLUS4,`IMM_U,`REGW_EN,1'bx,1'bx,1'b1,`SEL_Y,1'b0,2'b00,`WB_ALU};*/
+		`OP_LUI   :
 			begin 
 				pcsel=  `PC_PLUS4;
 				immsel= `IMM_U;

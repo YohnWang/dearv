@@ -1,15 +1,14 @@
 `include "const.h"
 module cpu
 (
-	input wire[63:0] idata,
-	input wire[63:0] ddata,
+	input wire[63:0]  idata,
+	input wire[63:0]  ddata,
 	output wire[63:0] iaddr,
 	output wire[63:0] daddr,
 	output wire[63:0] wdata,
 	output wire memrw,
 	input wire clk,
 	input wire rst
-	
 	
 	
 );
@@ -34,6 +33,16 @@ reg[63:0] wwb;
 wire signed [63:0] wimm;
 wire[63:0] walu;
 
+
+always @(*)
+begin
+	case(wwbsel)
+		`WB_MEM:    wwb=ddata;
+		`WB_ALU:    wwb=walu;
+		`WB_PCPLUS4:wwb=wpc+4;
+		default:;
+	endcase
+end
 
 assign winst=idata[31:0];
 
@@ -104,15 +113,7 @@ alu alu_inst
 	.z(walu)
 );
 
-always @(*)
-begin
-	case(wwbsel)
-		`WB_MEM:    wwb=ddata;
-		`WB_ALU:    wwb=walu;
-		`WB_PCPLUS4:wwb=wpc+4;
-		default:;
-	endcase
-end
+
 
 
 endmodule

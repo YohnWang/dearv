@@ -6,6 +6,7 @@ module soc
 
 
 wire[63:0] iaddr,idata,ddata,daddr,wdata;
+wire rw;
 
 cpu cpu_inst
 (
@@ -14,25 +15,29 @@ cpu cpu_inst
 	.iaddr(iaddr),
 	.daddr(daddr),
 	.wdata(wdata),
+	.memrw(rw),
 	.clk(clk),
 	.rst(rst)
 );
 
+assign iaddr[63:10]=0;
+assign daddr[63:12]=0;
+
 imem imem_inst
 (
-	.addr(iaddr),
-	.word(10),
+	.addr(iaddr[9:0]),
+	.word(2'b10),
 	.data(idata)
 );
 
 dmem dmem_inst
 (
-	.addr(daddr),
-	.dataw(ddata),
-	.word(11),
-	.rw(),
+	.addr(daddr[11:0]),
+	.dataw(wdata),
+	.word(2'b11),
+	.rw(rw),
 	.clk(clk),
-	.datar(wdata)
+	.datar(ddata)
 );
 
 
