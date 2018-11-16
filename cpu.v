@@ -6,6 +6,7 @@ module cpu
 	output wire[63:0] iaddr,
 	output wire[63:0] daddr,
 	output wire[63:0] wdata,
+	output wire memrw,
 	input wire clk,
 	input wire rst
 	
@@ -48,7 +49,7 @@ cu cu_inst
 	.asel(wasel),
 	.bsel(wbsel),
 	.alusel(walusel),
-	.memrw(wmemrw),
+	.memrw(memrw),
 	.memword(wmemword),
 	.wbsel(wwbsel)
 	

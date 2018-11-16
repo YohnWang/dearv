@@ -68,17 +68,29 @@ pc pcor
 	.reset(reset)
 );
 
+
+soc soc_inst
+(
+	.clk(clk),
+	.rst(reset)
+);
+
 initial
 begin 
 	$dumpfile("dump.vcd");
 	$dumpvars();
-	clk=0;
+	
+	
 	reset=1;
-	#2;
+	#10;
 	reset=0;
-	pcx=1;
-	forever #2 pcx=!pcx;
+	
+	#10000;
+	
 	
 end 
+
+
+
 
 endmodule

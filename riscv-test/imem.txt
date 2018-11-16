@@ -1,3 +1,5 @@
+93 80 a0 00  // addi	ra,ra,10
 b3 00 00 00  // add	ra,zero,zero
 b3 00 00 40  // neg	ra,zero
 b3 70 00 00  // and	ra,zero,zero
+63 00 00 00  // beqz	zero,10 <.L11>
