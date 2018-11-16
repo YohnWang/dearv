@@ -1,9 +1,11 @@
+`include "const.h"
 module cpu
 (
-	input wire[63:0] imem,
-	input wire[63:0] dmem,
-	output reg[63:0] iaddr,
-	output reg[63:0] daddr,
+	input wire[63:0] idata,
+	input wire[63:0] ddata,
+	output wire[63:0] iaddr,
+	output wire[63:0] daddr,
+	output wire[63:0] wdata,
 	input wire clk,
 	input wire rst
 	
@@ -11,18 +13,105 @@ module cpu
 	
 );
 
+wire[2:0] wimmsel;
+wire wregwen;
+wire wbrun;
+wire wbsel;
+wire wasel;
+wire[3:0] walusel;
+wire wmemrw;
+wire[1:0] wwbsel;
 wire[63:0] wpc;
-//wire[63:0] alusel;
-wire wpcsel=1;
+wire wpcsel;
+wire[31:0] winst;
+wire wbreq;
+wire wbrlt;
+wire[1:0] wmemword;
+wire[63:0] wdataa;
+wire[63:0] wdatab;
+reg[63:0] wwb;
+wire signed [63:0] wimm;
+wire[63:0] walu;
+
+
+assign winst=idata[31:0];
+
+cu cu_inst
+(
+	.inst(winst),
+	.breq(wbreq),
+	.brlt(wbrlt),
+	.pcsel(wpcsel),
+	.immsel(wimmsel),
+	.regwen(wregwen),
+	.brun(wbrun),
+	.asel(wasel),
+	.bsel(wbsel),
+	.alusel(walusel),
+	.memrw(wmemrw),
+	.memword(wmemword),
+	.wbsel(wwbsel)
+	
+);
 
 pc pc_inst
 (
-	.x(wpcsel?0:wpc+4),
-	.y(wpc),
+	.x(wpcsel?walu:wpc+4),
+	.y(iaddr),
 	.clk(clk),
 	.reset(rst)
 );
 
+
+
+register register_inst
+(
+	.rd(winst[11:7]),
+	.rs1(winst[19:15]),
+	.rs2(winst[24:20]),
+	.out1(wdataa),
+	.out2(wdatab),
+	.rd_in(wwb),
+	.rd_we(wregwen),
+	.clk(clk)
+);
+
+immgen immgen_inst
+(
+	.inst(winst),
+	.immsel(wimmsel),
+	.imm(wimm)
+);
+
+brcomp brcomp_inst
+(
+	.x(wdataa),
+	.y(wdatab),
+	.brun(wbrun),
+	.brlt(wbrlt),
+	.breq(wbreq)
+);
+
+assign daddr=walu;
+assign wdata=wdatab;
+
+alu alu_inst
+(
+	.x(wasel?wpc:wdataa),
+	.y(wbsel?wimm:wdatab),
+	.alusel(walusel),
+	.z(walu)
+);
+
+always @(*)
+begin
+	case(wwbsel)
+		`WB_MEM:    wwb=ddata;
+		`WB_ALU:    wwb=walu;
+		`WB_PCPLUS4:wwb=wpc+4;
+		default:;
+	endcase
+end
 
 
 endmodule
