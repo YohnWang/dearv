@@ -25,4 +25,6 @@ begin
 	gpout=array[0];
 end
 
+
+
 endmodule

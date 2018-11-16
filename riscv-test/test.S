@@ -11,6 +11,7 @@ _start:
 1:
 	sw x1,0(x0)
 	lb x2,0(x0)
+	li x1,0x1234
 	
 1:
 	beq x0,x0,1b

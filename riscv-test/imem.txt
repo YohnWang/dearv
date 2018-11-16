@@ -5,4 +5,6 @@ b3 00 00 40  // neg	ra,zero
 b3 70 00 00  // and	ra,zero,zero
 23 20 10 00  // sw	ra,0(zero) # 0 <_start>
 03 01 00 00  // lb	sp,0(zero) # 0 <_start>
-63 00 00 00  // beqz	zero,1c <.L12>
+b7 10 00 00  // lui	ra,0x1
+9b 80 40 23  // addiw	ra,ra,564
+63 00 00 00  // beqz	zero,24 <.L12>
