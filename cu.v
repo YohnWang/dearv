@@ -180,8 +180,6 @@ begin
 		`OP_PRIV  :;
 		default  :/*trap*/;
 	endcase
-	
-
 end
 
 

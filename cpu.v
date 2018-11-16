@@ -7,10 +7,9 @@ module cpu
 	output wire[63:0] daddr,
 	output wire[63:0] wdata,
 	output wire memrw,
+	output wire[1:0] memword,
 	input wire clk,
 	input wire rst
-	
-	
 );
 
 wire[2:0] wimmsel;
@@ -32,12 +31,24 @@ wire[63:0] wdatab;
 reg[63:0] wwb;
 wire signed [63:0] wimm;
 wire[63:0] walu;
+wire wmemsign;
 
+
+reg[63:0] memdata_gen;
+always@(*)
+begin 
+	case(wmemword)
+		2'b00: memdata_gen=wmemsign?{56'b0,ddata[7:0]}:{{56{ddata[7]}},ddata[7:0]};
+		2'b01: memdata_gen=wmemsign?{48'b0,ddata[15:0]}:{{48{ddata[7]}},ddata[15:0]};
+		2'b10: memdata_gen=wmemsign?{32'b0,ddata[31:0]}:{{32{ddata[7]}},ddata[31:0]};
+		2'b11: memdata_gen=ddata;
+	endcase
+end
 
 always @(*)
 begin
 	case(wwbsel)
-		`WB_MEM:    wwb=ddata;
+		`WB_MEM:    wwb=memdata_gen;
 		`WB_ALU:    wwb=walu;
 		`WB_PCPLUS4:wwb=wpc+4;
 		default:;
@@ -45,6 +56,7 @@ begin
 end
 
 assign winst=idata[31:0];
+assign memword=wmemword;
 
 cu cu_inst
 (
@@ -60,14 +72,19 @@ cu cu_inst
 	.alusel(walusel),
 	.memrw(memrw),
 	.memword(wmemword),
+	.memsign(wmemsign),
 	.wbsel(wwbsel)
-	
 );
+
+//wire[63:0] wpcplus4=wpc+4;
+//wire[63:0] wpcx=wpcsel?walu:wpc+4;
+
+assign iaddr=wpc;
 
 pc pc_inst
 (
 	.x(wpcsel?walu:wpc+4),
-	.y(iaddr),
+	.y(wpc),
 	.clk(clk),
 	.reset(rst)
 );

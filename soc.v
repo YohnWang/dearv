@@ -7,6 +7,7 @@ module soc
 
 wire[63:0] iaddr,idata,ddata,daddr,wdata;
 wire rw;
+wire[1:0] word;
 
 cpu cpu_inst
 (
@@ -16,6 +17,7 @@ cpu cpu_inst
 	.daddr(daddr),
 	.wdata(wdata),
 	.memrw(rw),
+	.memword(word),
 	.clk(clk),
 	.rst(rst)
 );
@@ -34,11 +36,22 @@ dmem dmem_inst
 (
 	.addr(daddr[11:0]),
 	.dataw(wdata),
-	.word(2'b11),
+	.word(word),
 	.rw(rw),
 	.clk(clk),
 	.datar(ddata)
 );
 
+gpio gpio_inst
+(
+	.addr(daddr[2]),
+	.rw(rw),
+	.in(),
+	.wdata(),
+	.clk(clk),
+	.gpout(),
+	.gpread()
+
+);
 
 endmodule
