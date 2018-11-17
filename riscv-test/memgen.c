@@ -73,7 +73,7 @@ int main()
 					state=4;
 					inst[ttext]='\0';
 					//printf("%c%c %c%c %c%c %c%c  // %s\n",text[6],text[7],text[4],text[5],text[2],text[3],text[0],text[1],inst);
-					printf("assign mem[%d] = 32'h%s; // %s\n",inst_num++,text,inst);
+					printf("assign mem[%d]=32'h;%s // %s\n",inst_num++,text,inst);
 					state=0;
 					itext=0;
 					ttext=0;

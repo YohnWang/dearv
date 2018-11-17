@@ -5,18 +5,18 @@ module imem
 	output reg[63:0] data
 );
 
-reg[7:0] mem[1023:0];
+wire[31:0] mem[31:0];
 
-initial $readmemh("./riscv-test/imem.txt",mem);
+//initial $readmemh("./riscv-test/imem.txt",mem);
 
 always@(*)
 begin 
-	case(word)
-		2'b00 : data={mem[addr]};
-		2'b01 : data={mem[addr+1],mem[addr]};
-		2'b10 : data={mem[addr+3],mem[addr+2],mem[addr+1],mem[addr]};
-		2'b11 : data={mem[addr+7],mem[addr+6],mem[addr+5],mem[addr+4],mem[addr+3],mem[addr+2],mem[addr+1],mem[addr]};
-	endcase
+	data=mem[addr[6:2]];
 end
+
+
+assign mem[0] = 32'h00a00093; // li	ra,10
+assign mem[1] = 32'h00102023; // sw	ra,0(zero) # 0 <_start>
+assign mem[2] = 32'h00000063; // beqz	zero,8 <.L11>
 
 endmodule

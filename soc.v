@@ -2,9 +2,7 @@ module soc
 (
 	input wire clk,
 	input wire rst,
-	output [6:0] seg7_out,
-    output [3:0] seg7_sel,
-    output seg7dp_out
+	output wire[7:0] wgpio
 );
 
 
@@ -71,7 +69,8 @@ dmem dmem_inst
 	.word(word),
 	.rw(rw),
 	.clk(clk),
-	.datar(ddata)
+	.datar(ddata),
+	.gpio(wgpio)
 );
 
 gpio gpio_inst
@@ -86,6 +85,8 @@ gpio gpio_inst
 
 );
 
+
+/*
 reg[15:0] seg7_data;
 always@(*)
 begin 
@@ -104,6 +105,6 @@ seg7_disp4 seg7_disp4_inst
 	.oCOM(seg7_sel),
 	.digitals(seg7_data)
 );
-
+*/
 
 endmodule

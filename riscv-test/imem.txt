@@ -1,10 +1,3 @@
-93 00 60 ff  // li	ra,-10
-63 08 00 00  // beqz	zero,14 <.L11>
-b3 00 00 00  // add	ra,zero,zero
-b3 00 00 40  // neg	ra,zero
-b3 70 00 00  // and	ra,zero,zero
-23 20 10 00  // sw	ra,0(zero) # 0 <_start>
-03 01 00 00  // lb	sp,0(zero) # 0 <_start>
-b7 10 00 00  // lui	ra,0x1
-9b 80 40 23  // addiw	ra,ra,564
-63 00 00 00  // beqz	zero,24 <.L12>
+assign mem[0] = 00a00093; // li	ra,10
+assign mem[1] = 00102023; // sw	ra,0(zero) # 0 <_start>
+assign mem[2] = 00000063; // beqz	zero,8 <.L11>
