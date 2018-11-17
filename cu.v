@@ -113,7 +113,7 @@ begin
 			end 
 		`OP_BRAN  :
 			begin 
-				pcsel=  breq?`PC_JUMP:`PC_PLUS4;
+				pcsel=  pcsel_gen;
 				immsel= `IMM_B;
 				regwen= `REGW_UN;
 				//brun=    0;
