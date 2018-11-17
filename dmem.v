@@ -6,7 +6,7 @@ module dmem
 	input wire rw,
 	input wire clk,
 	output reg[63:0] datar,
-	output reg[7:0]  gpio
+	output reg[15:0]  gpio
 );
 
 reg[7:0] mem[63:0];
@@ -34,8 +34,10 @@ end
 
 always@(*)
 begin 
-	gpio=mem[0];
+	gpio={mem[1],mem[0]};
 end
+
+
 
 endmodule
 

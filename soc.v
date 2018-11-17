@@ -2,13 +2,18 @@ module soc
 (
 	input wire clk,
 	input wire rst,
-	output wire[7:0] wgpio
+	output wire[6:0] seg7_out,
+	output wire[3:0] seg7_sel,
+	output wire seg7dp_out
 );
 
 
 wire[63:0] iaddr,idata,ddata,daddr,wdata;
 wire rw;
 wire[1:0] word;
+
+wire[15:0] wgpio;
+
 
 cpu cpu_inst
 (
@@ -86,15 +91,6 @@ gpio gpio_inst
 );
 
 
-/*
-reg[15:0] seg7_data;
-always@(*)
-begin 
-	if(daddr==64'h1024 && word==2'b01 && rw==1)
-		seg7_data=wdata[15:0];
-	else 
-		;
-end
 
 seg7_disp4 seg7_disp4_inst
 (
@@ -103,8 +99,7 @@ seg7_disp4 seg7_disp4_inst
 	.oSEG(seg7_out),
 	.oSEGDP(seg7dp_out),
 	.oCOM(seg7_sel),
-	.digitals(seg7_data)
+	.digitals(wgpio)
 );
-*/
 
 endmodule
