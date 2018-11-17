@@ -28,12 +28,15 @@ end
 
 always@(*)
 begin
+/*
 	case(word)
 		2'b00: datar={mem[addr]};
 		2'b01: datar={mem[addr+1],mem[addr]};
 	 	2'b10: datar={mem[addr+3],mem[addr+2],mem[addr+1],mem[addr]};
 		2'b11: datar={mem[addr+7],mem[addr+6],mem[addr+5],mem[addr+4],mem[addr+3],mem[addr+2],mem[addr+1],mem[addr]};
 	endcase
+*/
+	datar={mem[addr+7],mem[addr+6],mem[addr+5],mem[addr+4],mem[addr+3],mem[addr+2],mem[addr+1],mem[addr]};
 end
 
 endmodule
