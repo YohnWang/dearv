@@ -17,33 +17,17 @@ module cu
 	output reg[1:0] wbsel
 );
 
-
-reg[3:0] alusel_gen;
-always@(*)
-begin 
-	case(inst[14:12])
-		`ARI_AS     : alusel_gen=inst[30]?`SEL_SUB:`SEL_ADD; 
-		`ARI_SLL    : alusel_gen=`SEL_SLL;
-		`ARI_SLT    : alusel_gen=`SEL_SLT;
-		`ARI_SLTU   : alusel_gen=`SEL_SLTU;
-		`ARI_XOR    : alusel_gen=`SEL_XOR;
-		`ARI_SR     : alusel_gen=inst[30]?`SEL_SRA:`SEL_SRL;
-		`ARI_OR     : alusel_gen=`SEL_OR;
-		`ARI_AND    : alusel_gen=`SEL_AND;
-		default:;
-	endcase
-end 
-
 reg pcsel_gen;
+
+always@(*) brun=inst[13];
+
 always@(*)
 begin 
-	case(inst[14:12])
-		`BRAN_BEQ : pcsel_gen=breq?`PC_JUMP:`PC_PLUS4;
-		`BRAN_BNE : pcsel_gen=breq?`PC_PLUS4:`PC_JUMP;
-		`BRAN_BLT : begin brun=0;pcsel_gen=brlt?`PC_JUMP:`PC_PLUS4; end 
-		`BRAN_BGE : begin brun=0;pcsel_gen=brlt?`PC_PLUS4:`PC_JUMP; end
-		`BRAN_BLTU: begin brun=1;pcsel_gen=brlt?`PC_JUMP:`PC_PLUS4; end 
-		`BRAN_BGEU: begin brun=1;pcsel_gen=brlt?`PC_PLUS4:`PC_JUMP; end
+	case({inst[14],inst[12]})
+		`BRAN_EQ : pcsel_gen=breq?`PC_JUMP:`PC_PLUS4;
+		`BRAN_NE : pcsel_gen=breq?`PC_PLUS4:`PC_JUMP;
+		`BRAN_LT : pcsel_gen=brlt?`PC_JUMP:`PC_PLUS4;
+		`BRAN_GE : pcsel_gen=brlt?`PC_PLUS4:`PC_JUMP;
 		default:;
 	endcase
 end
@@ -67,7 +51,7 @@ begin
 				//brun=    0;
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_Y;
+				alusel= `ALU_Y;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
@@ -78,9 +62,9 @@ begin
 				immsel= `IMM_U;
 				regwen= `REGW_EN;
 				//brun=    0;
-				asel=    0;
+				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_ADD;
+				alusel= `ALU_ADD;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
@@ -93,7 +77,7 @@ begin
 				//brun=    0;
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_ADD;
+				alusel= `ALU_ADD;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_PCPLUS4;
@@ -106,7 +90,7 @@ begin
 				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_ADD;
+				alusel= `ALU_ADD;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_PCPLUS4;
@@ -119,7 +103,7 @@ begin
 				//brun=    0;
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_ADD;
+				alusel= `ALU_ADD;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=   0;
@@ -132,7 +116,7 @@ begin
 				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_ADD;
+				alusel= `ALU_ADD;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_MEM;
@@ -145,7 +129,7 @@ begin
 				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
-				alusel= `SEL_ADD;
+				alusel= `ALU_ADD;
 				memrw=  `MEM_WRITE;
 				//memword= 0;
 				wbsel=   0;
@@ -158,7 +142,7 @@ begin
 				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
-				alusel=  inst[14:12]?alusel_gen:`SEL_ADD;
+				alusel=  (inst[14:12]==3'b101)?({inst[30],inst[14:12]}):({1'b0,inst[14:12]});
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
@@ -171,7 +155,7 @@ begin
 				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_REG;
-				alusel= alusel_gen;
+				alusel= {inst[30],inst[14:12]};
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;

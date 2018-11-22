@@ -18,6 +18,20 @@
 `define SEL_X   4'd10
 `define SEL_Y   4'd11
 
+//new alusel 
+`define ALU_ADD  4'b0000
+`define ALU_SUB  4'b1000
+`define ALU_SLL  4'b0001
+`define ALU_SLT  4'b0010
+`define ALU_SLTU 4'b0011
+`define ALU_XOR  4'b0100
+`define ALU_SRL  4'b0101
+`define ALU_SRA  4'b1101
+`define ALU_OR   4'b0110
+`define ALU_AND  4'b0111
+`define ALU_X    4'b1110
+`define ALU_Y    4'b1111
+
 
 //immsel
 `define IMM_I 3'd0
@@ -79,6 +93,11 @@
 `define BRAN_BGE  3'b101
 `define BRAN_BLTU 3'b110
 `define BRAN_BGEU 3'b111 
+
+`define BRAN_EQ 2'b00 
+`define BRAN_NE 2'b01 
+`define BRAN_LT 2'b10 
+`define BRAN_GE 2'b11
 
 
 //load funct3

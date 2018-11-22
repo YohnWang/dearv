@@ -39,6 +39,12 @@ begin
 	datar={mem[addr+7],mem[addr+6],mem[addr+5],mem[addr+4],mem[addr+3],mem[addr+2],mem[addr+1],mem[addr]};
 end
 
+
+always@(*)
+begin 
+	$write("%c",mem[0]);
+end
+
 endmodule
 
 
