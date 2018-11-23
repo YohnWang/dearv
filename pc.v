@@ -9,6 +9,6 @@ module pc
 	input wire reset
 );
 
-always@(posedge clk) y=reset?0:x;
+always@(posedge clk) y=reset?32'h80000000:x;
 
 endmodule

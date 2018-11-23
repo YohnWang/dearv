@@ -25,9 +25,26 @@ cpu cpu_inst
 	.rst(rst)
 );
 
-assign iaddr[63:10]=0;
-assign daddr[63:12]=0;
+//assign iaddr[63:10]=0;
+//assign daddr[63:12]=0;
 
+bus bus_inst
+(
+	.idata(idata),
+	.iaddr(iaddr),
+	
+	.ddata(ddata),
+	.daddr(daddr),
+	.wdata(wdata),
+	.rw(rw),
+	.word(word),
+	
+	.clk(clk),
+	.rst(rst)
+);
+
+
+/*
 `define _TEST
 `ifdef _TEST
 
@@ -73,6 +90,7 @@ dmem dmem_inst
 	.clk(clk),
 	.datar(ddata)
 );
+*/
 
 gpio gpio_inst
 (
