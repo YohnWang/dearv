@@ -1,12 +1,13 @@
 93 00 60 ff  // li	ra,-10
+b7 12 00 02  // lui	t0,0x2001
 b3 00 00 00  // add	ra,zero,zero
 b3 00 00 40  // neg	ra,zero
 b3 70 00 00  // and	ra,zero,zero
 93 00 10 06  // li	ra,97
-23 00 10 00  // sb	ra,0(zero) # 0 <_start>
+23 80 12 00  // sb	ra,0(t0) # 2001000 <.L12+0x2000fd0>
 93 80 10 00  // addi	ra,ra,1
 13 01 b0 07  // li	sp,123
-e3 1a 11 fe  // bne	sp,ra,14 <.L11>
+e3 1a 11 fe  // bne	sp,ra,18 <.L11>
 93 00 a0 00  // li	ra,10
-23 00 10 00  // sb	ra,0(zero) # 0 <_start>
-63 00 00 00  // beqz	zero,2c <.L12>
+23 80 12 00  // sb	ra,0(t0)
+63 00 00 00  // beqz	zero,30 <.L12>
