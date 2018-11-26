@@ -11,6 +11,7 @@ module cu
 	output reg asel,
 	output reg bsel,
 	output reg[3:0] alusel,
+	output reg aluupper,
 	output reg memrw,
 	output reg[1:0] memword,
 	output reg memsign,
@@ -50,6 +51,7 @@ begin
 				regwen= `REGW_EN;
 				//brun=    0;
 				asel=   `ASEL_PC;
+				aluupper = 1;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_Y;
 				memrw=  `MEM_READ;
@@ -65,6 +67,7 @@ begin
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
+				aluupper = 1;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
@@ -78,6 +81,7 @@ begin
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
+				aluupper = 1;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_PCPLUS4;
@@ -91,6 +95,7 @@ begin
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
+				aluupper = 1;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_PCPLUS4;
@@ -104,6 +109,7 @@ begin
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
+				aluupper = 1;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=   0;
@@ -117,6 +123,7 @@ begin
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
+				aluupper = 1;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_MEM;
@@ -130,6 +137,7 @@ begin
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
+				aluupper = 1;
 				memrw=  `MEM_WRITE;
 				//memword= 0;
 				wbsel=   0;
@@ -143,6 +151,7 @@ begin
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel=  (inst[14:12]==3'b101)?({inst[30],inst[14:12]}):({1'b0,inst[14:12]});
+				aluupper = 1;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
@@ -156,11 +165,45 @@ begin
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_REG;
 				alusel= {inst[30],inst[14:12]};
+				aluupper = 1;
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
 			end
-		`OP_FENCE :;
+		`OP_ARIR32  :
+			begin 
+				pcsel=  `PC_PLUS4;
+				immsel=  0;
+				regwen= `REGW_EN;
+				//brun=    0;
+				asel=   `ASEL_REG;
+				bsel=   `BSEL_REG;
+				alusel= {inst[30],inst[14:12]};
+				aluupper = 0;
+				memrw=  `MEM_READ;
+				//memword= 0;
+				wbsel=  `WB_ALU;
+			end
+		`OP_ARII32  :
+			begin 
+				pcsel=  `PC_PLUS4;
+				immsel= `IMM_I;
+				regwen= `REGW_EN;
+				//brun=    0;
+				asel=   `ASEL_REG;
+				bsel=   `BSEL_IMM;
+				alusel=  (inst[14:12]==3'b101)?({inst[30],inst[14:12]}):({1'b0,inst[14:12]});
+				aluupper = 0;
+				memrw=  `MEM_READ;
+				//memword= 0;
+				wbsel=  `WB_ALU;
+			end 
+		`OP_FENCE :
+			begin 
+				/*just do nothing*/
+				regwen = `REGW_UN;
+				memrw = `MEM_READ;
+			end
 		`OP_PRIV  :;
 		default  :/*trap*/;
 	endcase

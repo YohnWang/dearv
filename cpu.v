@@ -18,6 +18,7 @@ wire wbrun;
 wire wbsel;
 wire wasel;
 wire[3:0] walusel;
+wire waluupper;
 wire wmemrw;
 wire[1:0] wwbsel;
 wire[63:0] wpc;
@@ -70,6 +71,7 @@ cu cu_inst
 	.asel(wasel),
 	.bsel(wbsel),
 	.alusel(walusel),
+	.aluupper(waluupper),
 	.memrw(memrw),
 	.memword(wmemword),
 	.memsign(wmemsign),
@@ -127,6 +129,7 @@ alu alu_inst
 	.x(wasel?wpc:wdataa),
 	.y(wbsel?wimm:wdatab),
 	.alusel(walusel),
+	.upper(waluupper),
 	.z(walu)
 );
 
