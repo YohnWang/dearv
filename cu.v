@@ -15,7 +15,10 @@ module cu
 	output reg memrw,
 	output reg[1:0] memword,
 	output reg memsign,
-	output reg[1:0] wbsel
+	output reg[1:0] wbsel,
+	output reg csrsel,
+	output reg csr_wen,
+	output reg[1:0] csr_funct
 );
 
 reg pcsel_gen;
@@ -57,6 +60,7 @@ begin
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
+				csr_wen=0;
 			end 
 		`OP_AUIPC :
 			begin 
@@ -71,6 +75,7 @@ begin
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
+				csr_wen=0;
 			end
 		`OP_JAL   :
 			begin 
@@ -85,6 +90,7 @@ begin
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_PCPLUS4;
+				csr_wen=0;
 			end 
 		`OP_JALR  :
 			begin 
@@ -99,6 +105,7 @@ begin
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_PCPLUS4;
+				csr_wen=0;
 			end 
 		`OP_BRAN  :
 			begin 
@@ -113,6 +120,7 @@ begin
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=   0;
+				csr_wen=0;
 			end 
 		`OP_LOAD  :
 			begin 
@@ -141,6 +149,7 @@ begin
 				memrw=  `MEM_WRITE;
 				//memword= 0;
 				wbsel=   0;
+				csr_wen=0;
 			end 
 		`OP_ARII  :
 			begin 
@@ -155,6 +164,7 @@ begin
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
+				csr_wen=0;
 			end 
 		`OP_ARIR  :
 			begin 
@@ -169,6 +179,7 @@ begin
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
+				csr_wen=0;
 			end
 		`OP_ARIR32  :
 			begin 
@@ -197,14 +208,31 @@ begin
 				memrw=  `MEM_READ;
 				//memword= 0;
 				wbsel=  `WB_ALU;
+				csr_wen=0;
 			end 
 		`OP_FENCE :
 			begin 
 				/*just do nothing*/
 				regwen = `REGW_UN;
 				memrw = `MEM_READ;
+				csr_wen=0;
 			end
-		`OP_PRIV  :;
+		`OP_PRIV  :
+			begin 
+				pcsel=  `PC_PLUS4;
+				//immsel= 0;
+				regwen= `REGW_UN;
+				//asel=   `ASEL_REG;
+				//bsel=   `BSEL_IMM;
+				//alusel=  (inst[14:12]==3'b101)?({inst[30],inst[14:12]}):({1'b0,inst[14:12]});
+				//aluupper = 0;
+				memrw=  `MEM_READ;
+				//memword= 0;
+				wbsel=  `WB_CSR;
+				csr_funct=inst[13:12];
+				csrsel=inst[14];
+				csr_wen=inst[13:12]?1:0;
+			end
 		default  :/*trap*/;
 	endcase
 end

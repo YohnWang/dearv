@@ -65,6 +65,7 @@
 `define MEM_DOUBLE 2'11
 
 //write back sel 
+`define WB_CSR     2'd3
 `define WB_PCPLUS4 2'd2
 `define WB_ALU     2'd1
 `define WB_MEM     2'd0

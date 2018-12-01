@@ -34,6 +34,10 @@ wire signed [63:0] wimm;
 wire[63:0] walu;
 wire wmemsign;
 
+wire wcsrsel;
+wire wcsr_wen;
+wire[1:0] wcsr_funct;
+wire[63:0] wcsr_data;
 
 reg[63:0] memdata_gen;
 always@(*)
@@ -52,6 +56,7 @@ begin
 		`WB_MEM:    wwb=memdata_gen;
 		`WB_ALU:    wwb=walu;
 		`WB_PCPLUS4:wwb=wpc+4;
+		`WB_CSR    :wwb=wcsr_data;
 		default:;
 	endcase
 end
@@ -75,7 +80,10 @@ cu cu_inst
 	.memrw(memrw),
 	.memword(wmemword),
 	.memsign(wmemsign),
-	.wbsel(wwbsel)
+	.wbsel(wwbsel),
+	.csrsel(wcsrsel),
+	.csr_wen(wcsr_wen),
+	.csr_funct(wcsr_funct)
 );
 
 //wire[63:0] wpcplus4=wpc+4;
@@ -133,6 +141,21 @@ alu alu_inst
 	.z(walu)
 );
 
+wire[63:0] wcsrwdata=wcsrsel?{winst[19:15]}:wdataa;
+
+csr csr_inst
+(
+	.csraddr(winst[31:20]),
+	.funct(wcsr_funct),
+	.wdata(wcsrwdata),
+	.rdata(wcsr_data),
+	.mtvec(),
+	.mepc(),
+	.mie(),
+	.wen(wcsr_wen),
+	.clk(clk),
+	.rst(rst)
+);
 
 
 
