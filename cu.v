@@ -100,199 +100,122 @@ begin
 	endcase
 end
 
+//write back
+always@(*)
+begin 
+	case(inst[6:2])
+		`OP_JAL,   
+		`OP_JALR:   wbsel=`WB_PCPLUS4;
+		
+		`OP_LUI,
+		`OP_AUIPC,
+		`OP_ARII,
+		`OP_ARIR,
+		`OP_ARII32,
+		`OP_ARIR32: wbsel=`WB_ALU;
+		
+		`OP_LOAD  : wbsel=`WB_MEM;
+		
+		default:    wbsel=0;
+	endcase
+end
+
+//ALU 
 always@(*)
 begin 
 	case(inst[6:2])
 		`OP_LUI   :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel= `IMM_U;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_PC;
 				aluupper = 1;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_Y;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_ALU;
-				csr_wen=0;
 			end 
 		`OP_AUIPC :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel= `IMM_U;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
 				aluupper = 1;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_ALU;
-				csr_wen=0;
 			end
 		`OP_JAL   :
 			begin 
-				//pcsel=  `PC_JUMP;
-				//immsel= `IMM_J;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
 				aluupper = 1;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_PCPLUS4;
-				csr_wen=0;
 			end 
 		`OP_JALR  :
 			begin 
-				//pcsel=  `PC_JUMP;
-				//immsel= `IMM_I;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
 				aluupper = 1;
-				memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_PCPLUS4;
-				csr_wen=0;
 			end 
 		`OP_BRAN  :
 			begin 
-				//pcsel=  pcsel_gen;
-				//immsel= `IMM_B;
-				//regwen= `REGW_UN;
-				//brun=    0;
 				asel=   `ASEL_PC;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
 				aluupper = 1;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=   0;
-				csr_wen=0;
 			end 
 		`OP_LOAD  :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel= `IMM_I;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
 				aluupper = 1;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_MEM;
 			end 
 		`OP_STORE :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel= `IMM_S;
-				//regwen= `REGW_UN;
-				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel= `ALU_ADD;
 				aluupper = 1;
-				//memrw=  `MEM_WRITE;
-				//memword= 0;
-				wbsel=   0;
-				csr_wen=0;
 			end 
 		`OP_ARII  :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel= `IMM_I;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel=  (inst[14:12]==3'b101)?({inst[30],inst[14:12]}):({1'b0,inst[14:12]});
 				aluupper = 1;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_ALU;
-				csr_wen=0;
 			end 
 		`OP_ARIR  :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel=  0;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_REG;
 				alusel= {inst[30],inst[14:12]};
 				aluupper = 1;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_ALU;
-				csr_wen=0;
 			end
 		`OP_ARIR32  :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel=  0;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_REG;
 				alusel= {inst[30],inst[14:12]};
 				aluupper = 0;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_ALU;
 			end
 		`OP_ARII32  :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel= `IMM_I;
-				//regwen= `REGW_EN;
-				//brun=    0;
 				asel=   `ASEL_REG;
 				bsel=   `BSEL_IMM;
 				alusel=  (inst[14:12]==3'b101)?({inst[30],inst[14:12]}):({1'b0,inst[14:12]});
 				aluupper = 0;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_ALU;
-				csr_wen=0;
 			end 
 		`OP_FENCE :
 			begin 
-				/*just do nothing*/
-				//regwen = `REGW_UN;
-				//memrw = `MEM_READ;
-				csr_wen=0;
+			
 			end
 		`OP_PRIV  :
 			begin 
-				//pcsel=  `PC_PLUS4;
-				//immsel= 0;
-				//regwen= `REGW_UN;
-				//asel=   `ASEL_REG;
-				//bsel=   `BSEL_IMM;
-				//alusel=  (inst[14:12]==3'b101)?({inst[30],inst[14:12]}):({1'b0,inst[14:12]});
-				//aluupper = 0;
-				//memrw=  `MEM_READ;
-				//memword= 0;
-				wbsel=  `WB_CSR;
 				csr_funct=inst[13:12];
 				csrsel=inst[14];
-				csr_wen=inst[13:12]?1:0;
 			end
 		default  :/*trap*/;
 	endcase
 end
 
+//csr wen
+always@(*) csr_wen=((inst[6:2]==`OP_PRIV) && inst[13:12])?1:0;
 
 endmodule
 
